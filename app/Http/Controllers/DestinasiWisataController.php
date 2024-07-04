@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DestinasiWisata;
 use App\Models\Kategori;
-use App\Models\Pengelola;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
@@ -12,15 +11,7 @@ class DestinasiWisataController extends Controller
     public function index()
     {
         $destinasi_wisatas = DestinasiWisata::with('kategorii')->orderBy('name', 'asc')->paginate(5);
-
-        return view('destinasi.index', compact('destinasi_wisatas'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
-    }
-
-    public function create()
-    {
-        $data_kategorii = Kategori::all();
-        return view('destinasi.create', compact('data_kategorii'));
+        return response()->json($destinasi_wisatas);
     }
 
     public function store(Request $request)
@@ -31,7 +22,7 @@ class DestinasiWisataController extends Controller
             'fasilitas' => 'required',
             'tarif_masuk' => 'required',
             'deskripsi' => 'required',
-            'kategori' => 'required',
+            'kategori' => 'required|exists:kategoris,id',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -44,32 +35,28 @@ class DestinasiWisataController extends Controller
             $input['image'] = $profileImage;
         }
 
-        DestinasiWisata::create($input);
+        $destinasiWisata = DestinasiWisata::create($input);
 
-        return redirect()->route('destinasi.index')
-            ->with('success', 'Destinasi created successfully.');
+        return response()->json($destinasiWisata, 201);
     }
 
-    public function show(DestinasiWisata $destinasi_wisata)
+    public function show($id)
     {
-        return view('destinasi.show', compact('destinasi_wisata'));
+        $destinasiWisata = DestinasiWisata::with('kategorii')->findOrFail($id);
+        return response()->json($destinasiWisata);
     }
 
-    public function edit(DestinasiWisata $destinasi)
+    public function update(Request $request, $id)
     {
-        $data_kategorii = Kategori::all();
-        return view('destinasi.edit', compact('destinasi', 'data_kategorii'));
-    }
+        $destinasiWisata = DestinasiWisata::findOrFail($id);
 
-    public function update(Request $request, DestinasiWisata $destinasi)
-    {
         $request->validate([
             'name' => 'required',
             'lokasi' => 'required',
             'fasilitas' => 'required',
             'tarif_masuk' => 'required',
             'deskripsi' => 'required',
-            'kategori' => 'required',
+            'kategori' => 'required|exists:kategoris,id',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -82,31 +69,29 @@ class DestinasiWisataController extends Controller
             $input['image'] = $profileImage;
 
             // Hapus gambar lama jika ada
-            if ($destinasi->image) {
-                File::delete(public_path('images/'.$destinasi->image));
+            if ($destinasiWisata->image) {
+                File::delete(public_path('images/'.$destinasiWisata->image));
             }
         } else {
             unset($input['image']);
         }
 
-        $destinasi->update($input);
+        $destinasiWisata->update($input);
 
-        return redirect()->route('destinasi.index')
-            ->with('success', 'Destinasi updated successfully.');
+        return response()->json($destinasiWisata);
     }
 
-    public function destroy(DestinasiWisata $destinasi)
+    public function destroy($id)
     {
-        if ($destinasi->image) {
-            File::delete(public_path('images/'.$destinasi->image));
+        $destinasiWisata = DestinasiWisata::findOrFail($id);
+
+        if ($destinasiWisata->image) {
+            File::delete(public_path('images/'.$destinasiWisata->image));
         }
 
-        $destinasi->delete();
+        $destinasiWisata->delete();
 
-        return redirect()->route('destinasi.index')
-            ->with('success', 'Destinasi deleted successfully.');
+        return response()->json(null, 204);
     }
-
-
-
 }
+

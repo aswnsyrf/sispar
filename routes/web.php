@@ -84,6 +84,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::post('logoutgues', [LoginController::class, 'logoutgues'])->name('logoutgues');
  });
+
+
 Route::get('detailwisata/{id}', [DetailWisataController::class, 'show'])->name('detailwisata.show');
 
 
@@ -112,6 +114,14 @@ Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembaya
 use App\Http\Controllers\ProfilController;
 
 Route::get('/profil-aktivitas', [ProfilController::class, 'index'])->name('profil.index');
+
+
+
+
+// use App\Http\Controllers\SearchController;
+
+// Route::get('/search', [SearchController::class, 'search'])->name('search');
+
 
 
 

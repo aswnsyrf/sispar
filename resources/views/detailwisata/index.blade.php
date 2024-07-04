@@ -93,8 +93,8 @@
                 <h2>{{ $destinasiWisata->name }}</h2>
                 <p class="text-muted">{{ $destinasiWisata->lokasi }}</p>
                 <p>{{ $destinasiWisata->deskripsi }}</p>
-                <p><strong>Fasilitas:</strong> {{ $destinasiWisata->fasilitas }}</p>
-                <p><strong>Tiket:</strong> {{ $destinasiWisata->tarif_masuk }}</p>
+                <p>Fasilitas {{ $destinasiWisata->fasilitas }}</p>
+                <p>Tiket {{ $destinasiWisata->tarif_masuk }}</p>
             </div>
             <div class="col-md-5">
                 <img src="/images/{{ $destinasiWisata->image }}" alt="{{ $destinasiWisata->name }}" class="img-fluid">
@@ -114,7 +114,7 @@
     </div>
 
     <div class="container">
-        <h3>Ulasan</h3>
+        <h5>Ulasan</h5>
         @if ($reviews->isEmpty())
             <p>Belum ada ulasan untuk destinasi wisata ini.</p>
         @else

@@ -14,7 +14,7 @@ class HomepageController extends Controller
     public function index()
     {
         $destinasi_wisata = DestinasiWisata::all();
-        return view("homepage.index", compact('destinasi_wisata'));
+        return view("homepage.index1", compact('destinasi_wisata'));
     }
 
     /**
